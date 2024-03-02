@@ -26,7 +26,7 @@ def extract_text_from_pdf(uploaded_file):
     return text
 
 def answer_question(pdf_text, question):
-    nlp_qa = pipeline("question-answering", model="bert-large-uncased-whole-word-masking-finetuned-squad")
+    nlp_qa = pipeline("question-answering", model="distilbert-base-cased-distilled-squad")
 
     # Convert the list to a single numpy array
     input_ids = np.array(nlp_qa.tokenizer.encode(question, pdf_text))
@@ -63,6 +63,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
