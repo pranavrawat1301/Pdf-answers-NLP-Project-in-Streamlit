@@ -7,7 +7,7 @@ Original file is located at
     https://colab.research.google.com/drive/142WmE5e3XxG0gb3mfixHh-SYRUxJ9M-4
 """
 
-pip install streamlit pymupdf transformers
+# pip install streamlit pymupdf transformers
 
 import streamlit as st
 import fitz
