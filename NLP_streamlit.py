@@ -12,7 +12,6 @@ Original file is located at
 import streamlit as st
 import fitz
 from transformers import pipeline
-import numpy as np
 import torch
 
 from io import BytesIO
@@ -28,8 +27,9 @@ def extract_text_from_pdf(uploaded_file):
 def answer_question(pdf_text, question):
     nlp_qa = pipeline("question-answering", model="distilbert-base-cased-distilled-squad")
 
-    # Convert the list to a single numpy array
-    input_ids = nlp_qa.tokenizer.encode(question, pdf_text, return_tensors="pt")
+    inputs = nlp_qa.tokenizer.encode_plus(question, pdf_text, return_tensors="pt", max_length=512, truncation=True)
+    input_ids = inputs["input_ids"]
+
     start_scores, end_scores = nlp_qa.model(input_ids)
 
     all_tokens = nlp_qa.tokenizer.convert_ids_to_tokens(input_ids[0])
@@ -62,3 +62,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
