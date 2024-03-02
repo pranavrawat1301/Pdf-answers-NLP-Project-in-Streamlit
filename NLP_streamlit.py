@@ -12,6 +12,7 @@ Original file is located at
 import streamlit as st
 import fitz
 from transformers import pipeline
+import numpy as np  # Import numpy
 
 from io import BytesIO
 
@@ -48,9 +49,11 @@ def main():
             elif not question:
                 st.warning("Please type a question.")
             else:
+                # Convert the list to a single numpy array
                 answer = answer_question(pdf_text, question)
                 st.success(f"Answer: {answer}")
 
 if __name__ == "__main__":
     main()
+
 
