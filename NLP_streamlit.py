@@ -29,11 +29,11 @@ def answer_question(pdf_text, question):
     nlp_qa = pipeline("question-answering", model="distilbert-base-cased-distilled-squad")
 
     # Convert the list to a single numpy array
-    input_ids = np.array(nlp_qa.tokenizer.encode(question, pdf_text))
-    start_scores, end_scores = nlp_qa.model(torch.tensor([input_ids]))
+    input_ids = nlp_qa.tokenizer.encode(question, pdf_text, return_tensors="pt")
+    start_scores, end_scores = nlp_qa.model(input_ids)
 
-    all_tokens = nlp_qa.tokenizer.convert_ids_to_tokens(input_ids)
-    answer = nlp_qa.tokenizer.decode(input_ids[torch.argmax(start_scores): torch.argmax(end_scores) + 1])
+    all_tokens = nlp_qa.tokenizer.convert_ids_to_tokens(input_ids[0])
+    answer = nlp_qa.tokenizer.decode(input_ids[0, torch.argmax(start_scores): torch.argmax(end_scores) + 1])
 
     return answer
 
@@ -57,13 +57,8 @@ def main():
             elif not question:
                 st.warning("Please type a question.")
             else:
-                # Convert the list to a single numpy array
                 answer = answer_question(pdf_text, question)
                 st.success(f"Answer: {answer}")
 
 if __name__ == "__main__":
     main()
-
-
-
-
