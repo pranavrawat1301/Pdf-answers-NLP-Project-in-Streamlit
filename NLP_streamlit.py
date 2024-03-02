@@ -25,7 +25,7 @@ def extract_text_from_pdf(uploaded_file):
     return text
 
 def answer_question(pdf_text, question):
-    nlp_qa = pipeline("question-answering", model="distilbert-base-cased-distilled-squad")
+    nlp_qa = pipeline("question-answering", model="bert-large-cased-whole-word-masking-finetuned-squad")
 
     inputs = nlp_qa.tokenizer.encode_plus(question, pdf_text, return_tensors="pt", max_length=512, truncation=True)
     input_ids = inputs["input_ids"]
