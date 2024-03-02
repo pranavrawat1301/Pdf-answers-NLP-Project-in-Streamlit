@@ -1,3 +1,5 @@
 streamlit==0.88.0
 pymupdf~=1.18.8
 transformers==4.9.0
+torch 
+tensorflow  
