@@ -15,13 +15,15 @@ from transformers import pipeline
 
 from io import BytesIO
 
+
 def extract_text_from_pdf(uploaded_file):
     text = ""
-    pdf_document = fitz.open(stream=BytesIO(uploaded_file.read()))
+    pdf_document = fitz.open(stream=BytesIO(uploaded_file.read()), filetype="pdf")
     for page_num in range(pdf_document.page_count):
         page = pdf_document[page_num]
         text += page.get_text("text")
     return text
+
 
 
 def answer_question(pdf_text, question):
