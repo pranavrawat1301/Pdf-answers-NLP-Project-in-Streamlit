@@ -13,13 +13,16 @@ import streamlit as st
 import fitz
 from transformers import pipeline
 
-def extract_text_from_pdf(file_path):
+from io import BytesIO
+
+def extract_text_from_pdf(uploaded_file):
     text = ""
-    with fitz.open(file_path) as pdf_document:
-        for page_num in range(pdf_document.page_count):
-            page = pdf_document[page_num]
-            text += page.get_text("text")
+    pdf_document = fitz.open(stream=BytesIO(uploaded_file.read()))
+    for page_num in range(pdf_document.page_count):
+        page = pdf_document[page_num]
+        text += page.get_text("text")
     return text
+
 
 def answer_question(pdf_text, question):
     nlp_qa = pipeline("question-answering")
