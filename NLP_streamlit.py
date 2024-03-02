@@ -40,8 +40,6 @@ def answer_question(pdf_text, question):
     return answer
 
 
-
-
 def main():
     st.title("PDF Question Answering App")
 
