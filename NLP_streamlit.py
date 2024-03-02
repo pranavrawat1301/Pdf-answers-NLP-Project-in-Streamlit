@@ -30,12 +30,15 @@ def answer_question(pdf_text, question):
     inputs = nlp_qa.tokenizer.encode_plus(question, pdf_text, return_tensors="pt", max_length=512, truncation=True)
     input_ids = inputs["input_ids"]
 
-    start_scores, end_scores = nlp_qa.model(input_ids)
+    start_scores, end_scores = nlp_qa.model(**inputs)
 
     all_tokens = nlp_qa.tokenizer.convert_ids_to_tokens(input_ids[0])
-    answer = nlp_qa.tokenizer.decode(input_ids[0, torch.argmax(start_scores): torch.argmax(end_scores) + 1])
+    answer_start = torch.argmax(start_scores)
+    answer_end = torch.argmax(end_scores) + 1
+    answer = nlp_qa.tokenizer.decode(input_ids[0, answer_start:answer_end])
 
     return answer
+
 
 def main():
     st.title("PDF Question Answering App")
