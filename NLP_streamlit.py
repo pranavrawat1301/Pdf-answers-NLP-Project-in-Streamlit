@@ -7,14 +7,13 @@ Original file is located at
     https://colab.research.google.com/drive/142WmE5e3XxG0gb3mfixHh-SYRUxJ9M-4
 """
 
-# pip install streamlit pymupdf transformers
+# pip install streamlit pymupdf transformers torch
 
 import streamlit as st
 import fitz
 from transformers import pipeline
 
 from io import BytesIO
-
 
 def extract_text_from_pdf(uploaded_file):
     text = ""
@@ -24,10 +23,8 @@ def extract_text_from_pdf(uploaded_file):
         text += page.get_text("text")
     return text
 
-
-
 def answer_question(pdf_text, question):
-    nlp_qa = pipeline("question-answering")
+    nlp_qa = pipeline("question-answering", model="bert-large-uncased-whole-word-masking-finetuned-squad")
     result = nlp_qa(question=question, context=pdf_text)
     return result["answer"]
 
@@ -56,3 +53,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
