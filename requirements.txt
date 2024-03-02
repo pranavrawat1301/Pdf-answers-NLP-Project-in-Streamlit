@@ -1,4 +1,4 @@
-streamlit==0.88.0
+streamlit
 pymupdf~=1.18.8
 transformers==4.9.0
 torch 
