@@ -35,8 +35,8 @@ def answer_question(pdf_text, question):
 
     all_tokens = nlp_qa.tokenizer.convert_ids_to_tokens(input_ids[0].tolist())
     
-    answer_start = torch.argmax(start_scores)
-    answer_end = torch.argmax(end_scores) + 1
+    answer_start = torch.argmax(start_scores, dim=1).item()
+    answer_end = torch.argmax(end_scores, dim=1).item() + 1
     
     # Ensure that indices are within the valid range
     answer_start = max(min(answer_start, len(all_tokens) - 1), 0)
@@ -45,6 +45,7 @@ def answer_question(pdf_text, question):
     answer = nlp_qa.tokenizer.decode(input_ids[0, answer_start:answer_end].tolist())
 
     return answer
+
 
 
 def main():
