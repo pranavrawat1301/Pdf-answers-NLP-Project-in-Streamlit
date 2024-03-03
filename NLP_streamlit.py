@@ -28,14 +28,24 @@ def extract_text_from_pdf(uploaded_file):
 def answer_question(pdf_text, question):
     nlp_qa = pipeline("question-answering", model="distilbert-base-cased-distilled-squad")
 
-    # Convert the list to a single numpy array
-    input_ids = np.array(nlp_qa.tokenizer.encode(question, pdf_text))
-    start_scores, end_scores = nlp_qa.model(torch.tensor([input_ids]))
+    inputs = nlp_qa.tokenizer.encode_plus(question, pdf_text, return_tensors="pt", max_length=512, truncation=True)
+    input_ids = inputs["input_ids"]
 
-    all_tokens = nlp_qa.tokenizer.convert_ids_to_tokens(input_ids)
-    answer = nlp_qa.tokenizer.decode(input_ids[torch.argmax(start_scores): torch.argmax(end_scores) + 1])
+    start_scores, end_scores = nlp_qa.model(**inputs)
+
+    all_tokens = nlp_qa.tokenizer.convert_ids_to_tokens(input_ids[0].tolist())
+    
+    answer_start = torch.argmax(start_scores)
+    answer_end = torch.argmax(end_scores) + 1
+    
+    # Ensure that indices are within the valid range
+    answer_start = max(min(answer_start, len(all_tokens) - 1), 0)
+    answer_end = max(min(answer_end, len(all_tokens)), 0)
+    
+    answer = nlp_qa.tokenizer.decode(input_ids[0, answer_start:answer_end].tolist())
 
     return answer
+
 
 def main():
     st.title("PDF Question Answering App")
