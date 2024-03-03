@@ -12,6 +12,7 @@ Original file is located at
 import streamlit as st
 import fitz
 from transformers import pipeline
+import numpy as np
 import torch
 
 from io import BytesIO
@@ -25,20 +26,16 @@ def extract_text_from_pdf(uploaded_file):
     return text
 
 def answer_question(pdf_text, question):
-    nlp_qa = pipeline("question-answering", model="bert-large-cased-whole-word-masking-finetuned-squad")
+    nlp_qa = pipeline("question-answering", model="distilbert-base-cased-distilled-squad")
 
-    inputs = nlp_qa.tokenizer.encode_plus(question, pdf_text, return_tensors="pt", max_length=512, truncation=True)
-    input_ids = inputs["input_ids"]
+    # Convert the list to a single numpy array
+    input_ids = np.array(nlp_qa.tokenizer.encode(question, pdf_text))
+    start_scores, end_scores = nlp_qa.model(torch.tensor([input_ids]))
 
-    start_scores, end_scores = nlp_qa.model(**inputs)
-
-    all_tokens = nlp_qa.tokenizer.convert_ids_to_tokens(input_ids[0].tolist())
-    answer_start = torch.argmax(start_scores, dim=1).tolist()[0]
-    answer_end = torch.argmax(end_scores, dim=1).tolist()[0] + 1
-    answer = nlp_qa.tokenizer.decode(input_ids[0, answer_start:answer_end].tolist())
+    all_tokens = nlp_qa.tokenizer.convert_ids_to_tokens(input_ids)
+    answer = nlp_qa.tokenizer.decode(input_ids[torch.argmax(start_scores): torch.argmax(end_scores) + 1])
 
     return answer
-
 
 def main():
     st.title("PDF Question Answering App")
@@ -60,9 +57,11 @@ def main():
             elif not question:
                 st.warning("Please type a question.")
             else:
+                # Convert the list to a single numpy array
                 answer = answer_question(pdf_text, question)
                 st.success(f"Answer: {answer}")
 
 if __name__ == "__main__":
     main()
+
 
