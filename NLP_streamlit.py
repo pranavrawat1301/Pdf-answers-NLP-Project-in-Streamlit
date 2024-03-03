@@ -28,23 +28,26 @@ def extract_text_from_pdf(uploaded_file):
 def answer_question(pdf_text, question):
     nlp_qa = pipeline("question-answering", model="distilbert-base-cased-distilled-squad")
 
-    inputs = nlp_qa.tokenizer.encode_plus(question, pdf_text, return_tensors="pt", max_length=512, truncation=True)
-    input_ids = inputs["input_ids"]
+    # Convert the list to a single numpy array
+    input_ids = np.array(nlp_qa.tokenizer.encode(question, pdf_text))
 
+    # Convert numpy array to PyTorch tensor
+    input_ids = torch.tensor(input_ids)
+
+    # Make sure the model is in evaluation mode
+    nlp_qa.model.eval()
+
+    # Perform inference
     with torch.no_grad():
-        start_scores, end_scores = nlp_qa.model(**inputs)
+        output = nlp_qa.model(input_ids.unsqueeze(0))
 
-    all_tokens = nlp_qa.tokenizer.convert_ids_to_tokens(input_ids[0].tolist())
-    answer_start = torch.argmax(start_scores, dim=1).item()
-    answer_end = torch.argmax(end_scores, dim=1).item() + 1
-
-    # Ensure that indices are within the valid range
-    answer_start = max(min(answer_start, len(all_tokens) - 1), 0)
-    answer_end = max(min(answer_end, len(all_tokens)), 0)
-
-    answer = nlp_qa.tokenizer.decode(input_ids[0, answer_start:answer_end].tolist())
+    # Get the predicted answer
+    answer_start = torch.argmax(output.start_logits)
+    answer_end = torch.argmax(output.end_logits) + 1
+    answer = nlp_qa.tokenizer.decode(input_ids[answer_start:answer_end])
 
     return answer
+
 
 
 
