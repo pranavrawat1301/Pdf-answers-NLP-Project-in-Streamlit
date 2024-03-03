@@ -33,7 +33,7 @@ def answer_question(pdf_text, question):
     model = BertForQuestionAnswering.from_pretrained("bert-large-uncased-whole-word-masking-finetuned-squad")
 
     # Tokenize input
-    inputs = tokenizer(question, pdf_text, return_tensors="pt")
+    inputs = tokenizer(question, pdf_text, return_tensors="pt", truncation=True, max_length=512)
 
     # Perform inference
     with torch.no_grad():
@@ -45,6 +45,7 @@ def answer_question(pdf_text, question):
     answer = tokenizer.decode(inputs["input_ids"][0, answer_start:answer_end])
 
     return answer
+
 
 
 
