@@ -25,28 +25,27 @@ def extract_text_from_pdf(uploaded_file):
         text += page.get_text("text")
     return text
 
+from transformers import BertTokenizer, BertForQuestionAnswering
+import torch
+
 def answer_question(pdf_text, question):
-    nlp_qa = pipeline("question-answering", model="distilbert-base-cased-distilled-squad")
+    tokenizer = BertTokenizer.from_pretrained("bert-large-uncased-whole-word-masking-finetuned-squad")
+    model = BertForQuestionAnswering.from_pretrained("bert-large-uncased-whole-word-masking-finetuned-squad")
 
-    # Convert the list to a single numpy array
-    input_ids = np.array(nlp_qa.tokenizer.encode(question, pdf_text))
-
-    # Convert numpy array to PyTorch tensor
-    input_ids = torch.tensor(input_ids)
-
-    # Make sure the model is in evaluation mode
-    nlp_qa.model.eval()
+    # Tokenize input
+    inputs = tokenizer(question, pdf_text, return_tensors="pt")
 
     # Perform inference
     with torch.no_grad():
-        output = nlp_qa.model(input_ids.unsqueeze(0))
+        outputs = model(**inputs)
 
     # Get the predicted answer
-    answer_start = torch.argmax(output.start_logits)
-    answer_end = torch.argmax(output.end_logits) + 1
-    answer = nlp_qa.tokenizer.decode(input_ids[answer_start:answer_end])
+    answer_start = torch.argmax(outputs.start_logits)
+    answer_end = torch.argmax(outputs.end_logits) + 1
+    answer = tokenizer.decode(inputs["input_ids"][0, answer_start:answer_end])
 
     return answer
+
 
 
 
