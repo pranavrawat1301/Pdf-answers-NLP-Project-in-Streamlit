@@ -12,48 +12,19 @@ Original file is located at
 import streamlit as st
 import fitz
 from transformers import pipeline
-import numpy as np
-import torch
 
-from io import BytesIO
-
-def extract_text_from_pdf(uploaded_file):
+def extract_text_from_pdf(file_path):
     text = ""
-    pdf_document = fitz.open(stream=BytesIO(uploaded_file.read()), filetype="pdf")
-    for page_num in range(pdf_document.page_count):
-        page = pdf_document[page_num]
-        text += page.get_text("text")
+    with fitz.open(file_path) as pdf_document:
+        for page_num in range(pdf_document.page_count):
+            page = pdf_document[page_num]
+            text += page.get_text("text")
     return text
 
-from transformers import BertTokenizer, BertForQuestionAnswering
-import torch
-
 def answer_question(pdf_text, question):
-    tokenizer = BertTokenizer.from_pretrained("bert-large-uncased-whole-word-masking-finetuned-squad")
-    model = BertForQuestionAnswering.from_pretrained("bert-large-uncased-whole-word-masking-finetuned-squad")
-
-    # Tokenize input
-    inputs = tokenizer(question, pdf_text, return_tensors="pt", truncation=True, max_length=512)
-
-    # Perform inference
-    with torch.no_grad():
-        outputs = model(**inputs)
-
-    # Get the predicted answer
-    answer_start = torch.argmax(outputs.start_logits)
-    answer_end = torch.argmax(outputs.end_logits) + 1
-    answer = tokenizer.decode(inputs["input_ids"][0, answer_start:answer_end])
-
-    return answer
-
-
-
-
-
-
-
-
-
+    nlp_qa = pipeline("question-answering")
+    result = nlp_qa(question=question, context=pdf_text)
+    return result["answer"]
 
 def main():
     st.title("PDF Question Answering App")
@@ -68,14 +39,13 @@ def main():
 
         st.subheader("Ask Questions:")
         question = st.text_input("Type your question:")
-
+        
         if st.button("Ask"):
             if not pdf_text:
                 st.warning("Please upload a valid PDF file.")
             elif not question:
                 st.warning("Please type a question.")
             else:
-                # Convert the list to a single numpy array
                 answer = answer_question(pdf_text, question)
                 st.success(f"Answer: {answer}")
 
