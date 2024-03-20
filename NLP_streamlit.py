@@ -20,6 +20,7 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.chains.question_answering import load_qa_chain
 from langchain.prompts import PromptTemplate
 from dotenv import load_dotenv
+from langchain_community.vectorstores import FAISS
 
 GOOGLE_API_KEY = "AIzaSyA9HvXllMvhy52q6m1JHkWZ8qWbEfpUKOk"
 
