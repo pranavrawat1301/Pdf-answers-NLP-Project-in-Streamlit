@@ -1,6 +1,9 @@
-streamlit==1.31.1
-pymupdf~=1.18.8
-transformers==4.9.0
-torch
-tensorflow-cpu
+streamlit
+google-generativeai
+python-dotenv
+langchain
+PyPDF2
+chromadb
+faiss-cpu
+langchain_google_genai
 
