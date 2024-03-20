@@ -23,7 +23,13 @@ from dotenv import load_dotenv
 
 GOOGLE_API_KEY = "AIzaSyA9HvXllMvhy52q6m1JHkWZ8qWbEfpUKOk"
 
-genai.configure(google_api_key=GOOGLE_API_KEY)
+# Set Google API key directly
+os.environ["GOOGLE_API_KEY"] = GOOGLE_API_KEY
+
+# Configure LangChain
+genai.set_google_api_key(GOOGLE_API_KEY)
+
+#genai.configure(google_api_key=GOOGLE_API_KEY)
 
 
 
