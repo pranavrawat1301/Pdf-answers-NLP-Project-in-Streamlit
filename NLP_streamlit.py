@@ -28,9 +28,9 @@ GOOGLE_API_KEY = "AIzaSyA9HvXllMvhy52q6m1JHkWZ8qWbEfpUKOk"
 os.environ["GOOGLE_API_KEY"] = GOOGLE_API_KEY
 
 # Configure LangChain
-#genai.set_google_api_key(GOOGLE_API_KEY)
+genai.set_google_api_key(GOOGLE_API_KEY)
 
-genai.configure(google_api_key=GOOGLE_API_KEY)
+#genai.configure(google_api_key=GOOGLE_API_KEY)
 
 
 
