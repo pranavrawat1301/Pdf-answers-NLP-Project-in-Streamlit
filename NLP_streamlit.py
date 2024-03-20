@@ -21,9 +21,10 @@ from langchain.chains.question_answering import load_qa_chain
 from langchain.prompts import PromptTemplate
 from dotenv import load_dotenv
 
+GOOGLE_API_KEY = "AIzaSyA9HvXllMvhy52q6m1JHkWZ8qWbEfpUKOk"
 load_dotenv()
-os.getenv("AIzaSyA9HvXllMvhy52q6m1JHkWZ8qWbEfpUKOk")
-genai.configure(api_key=os.getenv("AIzaSyA9HvXllMvhy52q6m1JHkWZ8qWbEfpUKOk"))
+os.getenv(GOOGLE_API_KEY)
+genai.configure(api_key=os.getenv(GOOGLE_API_KEY))
 
 
 
