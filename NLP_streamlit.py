@@ -24,7 +24,7 @@ from dotenv import load_dotenv
 GOOGLE_API_KEY = "AIzaSyA9HvXllMvhy52q6m1JHkWZ8qWbEfpUKOk"
 load_dotenv()
 os.getenv(GOOGLE_API_KEY)
-genai.configure(api_key=os.getenv(GOOGLE_API_KEY))
+genai.configure(google_api_key=GOOGLE_API_KEY)
 
 
 
