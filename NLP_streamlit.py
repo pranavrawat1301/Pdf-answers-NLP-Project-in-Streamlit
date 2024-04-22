@@ -22,7 +22,7 @@ from langchain.prompts import PromptTemplate
 from dotenv import load_dotenv
 from langchain_community.vectorstores import FAISS
 
-GOOGLE_API_KEY = "AIzaSyCRFEpeNoSTCA7IUqDvoP5oE245y_j9_xE"
+GOOGLE_API_KEY = "AIzaSyCyHF1McFZZkY-uWG6xsTwlcOOqzIR6uK8"
 
 # Set Google API key directly
 #os.environ["GOOGLE_API_KEY"] = GOOGLE_API_KEY
